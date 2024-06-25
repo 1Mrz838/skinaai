@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DermaAI</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        video {
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        #prediction {
+            font-size: 20px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to DermaAI</h1>
+    <p>Analyze your skin conditions with our AI model.</p>
+    <video id="webcam" autoplay playsinline width="224" height="224"></video>
+    <div id="prediction"></div>
+
+    <script type="text/javascript">
+        const modelURL = "model/model.json";
+        
+        let model, webcam, maxPredictions;
+
+        async function init() {
+            model = await tmImage.load(modelURL);
+            maxPredictions = model.getTotalClasses();
+
+            const flip = true;
+            webcam = new tmImage.Webcam(224, 224, flip);
+            await webcam.setup();
+            await webcam.play();
+            window.requestAnimationFrame(loop);
+
+            document.getElementById("webcam").appendChild(webcam.canvas);
+        }
+
+        async function loop() {
+            webcam.update();
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        async function predict() {
+            const prediction = await model.predict(webcam.canvas);
+            document.getElementById("prediction").innerText = prediction[0].className + ": " + Math.round(prediction[0].probability * 100) + "%";
+        }
+
+        init();
+    </script>
+</body>
+</html>
