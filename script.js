@@ -1,28 +1,24 @@
-let model, labelContainer, maxPredictions;
+const axios = require("axios");
+const fs = require("fs");
 
-// Load the image model and setup the webcam
-async function init() {
-    const modelURL = "URL_К_ВаШЕЙ_МОДЕЛИ/model.json";
-    const metadataURL = "URL_К_ВаШЕЙ_МОДЕЛИ/metadata.json";
+const image = fs.readFileSync("YOUR_IMAGE.jpg", {
+    encoding: "base64"
+});
 
-    // Load the model
-    model = await tmImage.load(modelURL, metadataURL);
-    maxPredictions = model.getTotalClasses();
-}
-
-async function predict() {
-    // Prediction
-    const image = document.getElementById("imageUpload").files[0];
-    const img = document.createElement("img");
-    img.src = URL.createObjectURL(image);
-
-    const prediction = await model.predict(img, false);
-    document.getElementById("result").innerText = JSON.stringify(prediction, null, 2);
-}
-
-document.getElementById("uploadForm").onsubmit = function(event) {
-    event.preventDefault();
-    predict();
-};
-
-init();
+axios({
+    method: "POST",
+    url: "https://detect.roboflow.com/classification-uy6nf/4",
+    params: {
+        api_key: "RYNXqKB7sJRP2OMoSvfv"
+    },
+    data: image,
+    headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+})
+.then(function(response) {
+    console.log(response.data);
+})
+.catch(function(error) {
+    console.log(error.message);
+});
