@@ -3,107 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DermaAI</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            color: #333;
-        }
-        #upload-section {
-            margin: 20px 0;
-        }
-        #upload-section input {
-            margin-top: 10px;
-        }
-        #uploaded-image {
-            max-width: 300px;
-            max-height: 300px;
-            margin: 20px 0;
-            border: 1px solid #ddd;
-        }
-        #prediction {
-            font-size: 20px;
-            color: #555;
-        }
-        #treatment {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #333;
-        }
-    </style>
+    <title>DermaAI - Skin Disease Diagnosis</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Welcome to DermaAI</h1>
-    <p>Analyze your skin conditions with our AI model.</p>
-
-    <div id="upload-section">
-        <input type="file" id="image-upload" accept="image/*">
-        <img id="uploaded-image" src="" alt="Uploaded Image">
-    </div>
-    
-    <div id="prediction"></div>
-    <div id="treatment"></div>
-
-    <script type="text/javascript">
-        const modelURL = "model/model.json";
-        
-        let model;
-
-        async function init() {
-            model = await tmImage.load(modelURL);
-            document.getElementById("image-upload").addEventListener("change", handleImageUpload);
-        }
-
-        function handleImageUpload(event) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const image = new Image();
-                image.src = reader.result;
-                image.onload = function() {
-                    document.getElementById("uploaded-image").src = image.src;
-                    predict(image);
-                }
-            }
-            reader.readAsDataURL(event.target.files[0]);
-        }
-
-        async function predict(image) {
-            const prediction = await model.predict(image);
-            const highestPrediction = prediction.reduce((max, p) => max.probability > p.probability ? max : p);
-            const className = highestPrediction.className;
-            const probability = Math.round(highestPrediction.probability * 100);
-            
-            document.getElementById("prediction").innerText = `${className}: ${probability}%`;
-            
-            const treatment = getTreatment(className);
-            document.getElementById("treatment").innerText = treatment;
-        }
-
-        function getTreatment(className) {
-            switch (className) {
-                case 'Healthy Skin':
-                    return 'Your skin looks healthy! Keep up with a good skincare routine and regular hydration.';
-                case 'Acne':
-                    return 'Treatment for acne includes using salicylic acid, benzoyl peroxide, and retinoids. Consult with a dermatologist for severe cases.';
-                case 'Eczema':
-                    return 'Eczema treatment includes moisturizing regularly, using topical corticosteroids, and avoiding known irritants. Consult with a dermatologist for personalized care.';
-                case 'Psoriasis':
-                    return 'Psoriasis treatment involves using topical treatments, phototherapy, and systemic medications. Consult with a dermatologist for a treatment plan.';
-                default:
-                    return 'Consult with a dermatologist for a proper diagnosis and treatment plan.';
-            }
-        }
-
-        init();
-    </script>
+    <h1>DermaAI - Skin Disease Diagnosis</h1>
+    <form id="uploadForm">
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Upload</button>
+    </form>
+    <div id="result"></div>
+    <script src="script.js"></script>
 </body>
 </html>
