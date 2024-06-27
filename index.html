@@ -9,10 +9,12 @@
 <body>
     <h1>DermaAI - Skin Disease Diagnosis</h1>
     <form id="uploadForm">
-        <input type="file" name="image" accept="image/*" required>
+        <input type="file" id="imageUpload" accept="image/*" required>
         <button type="submit">Upload</button>
     </form>
     <div id="result"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image"></script>
     <script src="script.js"></script>
 </body>
 </html>
